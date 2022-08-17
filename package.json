@@ -1,0 +1,23 @@
+{
+  "name": "vs-cypress",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cypress": "npx cypress open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JelenaSu/vs-cypress.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JelenaSu/vs-cypress/issues"
+  },
+  "homepage": "https://github.com/JelenaSu/vs-cypress#readme",
+  "devDependencies": {
+    "cypress": "^10.6.0"
+  }
+}
