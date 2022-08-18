@@ -6,6 +6,7 @@ import { general } from "../page_objects/general"
 import { addBoard } from "../page_objects/addBoard"
 import { editBoard } from "../page_objects/editBoard"
 import { deleteBoard } from "../page_objects/deleteBoard"
+import { logout } from "../page_objects/logout"
 
 var token;
 var boardId;
@@ -99,6 +100,22 @@ describe('Login test cases', () => {
   expect(response.status).to.eq(200);
       })
     })
+  })
+
+  it('Logout', () => {
+    cy.intercept('POST', 'https://cypress-api.vivifyscrum-stage.com/api/v2/logout').as('logout');
+    general.clickModalBtn();
+    logout.clickUserAvatar();
+    cy.url().should('contain', '/my-assignments');
+    logout.profileBtn.should('exist');
+    logout.clickProfileBtn();
+    logout.logoutBtn.should('be.visible')
+    .and('have.css', 'background-color', 'rgb(229, 73, 31)')
+    .and('contain', 'Log Out');
+    logout.clickLogoutBtn();
+    cy.wait('@logout').its('response').then(response => {
+      expect(response.statusCode).to.eq(201);
+  })
   })
 
   it('Logout BE', () => {
