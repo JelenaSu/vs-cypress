@@ -32,3 +32,26 @@ Cypress.Commands.add('loginBE', (email, password)=> {
     })
 
 })
+
+Cypress.Commands.add('logout', (token) => {
+    cy.request({
+        method: "POST", 
+        url: "https://cypress-api.vivifyscrum-stage.com/api/v2/logout",
+        headers: {
+            authorization: `Bearer ${token}`
+        }
+    })
+})
+
+Cypress.Commands.add('Delete board BE', (token) => {
+        cy.request({
+          method: 'DELETE',
+          url: `https://cypress-api.vivifyscrum-stage.com/api/v2/boards/${boardId}`,  
+          headers: {
+          authorization: `Bearer ${token}`,
+        }
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+      })
+    })
+

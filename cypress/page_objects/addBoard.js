@@ -64,7 +64,7 @@ class AddBoard {
      }
 
 
-     createNewBoard(title = "proba") {
+     createNewBoard(title) {
        this.myOrganizationDropDown.click();
        this.clickOnMyOrganizationBtn();
        this.enterTitleInput.type(title);

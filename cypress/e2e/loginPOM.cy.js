@@ -5,7 +5,7 @@ import { navigation } from "../page_objects/navigation"
 import { general } from "../page_objects/general"
 import { addBoard } from "../page_objects/addBoard"
 import { editBoard } from "../page_objects/editBoard"
-import { deleteBoard } from "../page_objects/delete"
+import { deleteBoard } from "../page_objects/deleteBoard"
 
 var token;
 var boardId;
@@ -21,6 +21,7 @@ describe('Login test cases', () => {
     loginPage.loginBtn.should('exist');
     loginPage.clickOnLoginBtn();
   })
+
 
   beforeEach("Login through BE", () => {
     cy.request ({
@@ -52,7 +53,7 @@ describe('Login test cases', () => {
     cy.intercept('POST', 'https://cypress-api.vivifyscrum-stage.com/api/v2/boards').as('addBoard');
     addBoard.addBoardBtn.should('exist');
     addBoard.clickOnAddBoardBtn();
-    addBoard.createNewBoard();
+    addBoard.createNewBoard("novo");
     cy.url().should('contain', 'boards');
     cy.wait('@addBoard').then(intercept => {
       expect(intercept.response.url).to.eq('https://cypress-api.vivifyscrum-stage.com/api/v2/boards');
@@ -61,37 +62,56 @@ describe('Login test cases', () => {
     })
   })
 
-  it('Edit board BE', () => {
+  it('Edit board', () => {
+    editBoard.boardBtn.should('exist');
+    editBoard.clickOnBoardBtn();
     editBoard.configurationBtn.should('exist');
     editBoard.clickOnConfigurationBtn();
-    cy.request({
-      method: "PUT",
-      url: `https://cypress-api.vivifyscrum-stage.com/api/v2/boards/${boardId}`,
-      body: {
-        name: "Novi Board",
-        description: "opis",
-      },
-      headers: {
-        authorization: `Bearer ${token}`
-      }
-
-    }).then((response) => {
-      expect(response.body.name).to.eq("Novi Board");
-      expect(response.status).to.eq(200);
-    })
-    
+    cy.url().should('contain', '/settings');
+    editBoard.inputBoardTitle.clear().type("title123");
+    editBoard.inputBoardDescription.clear().type("opis123");
+    editBoard.updateBtn.should('be.visible')
+    .and('have.css', 'background-color', 'rgb(78, 174, 147)');
+    editBoard.clickUpdateBtn();
   })
 
-  it('Delete board BE', () => {
-    cy.request({
-        method: 'DELETE',
-        url: `https://cypress-api.vivifyscrum-stage.com/api/v2/boards/${boardId}`,
-        headers: {
-            authorization: `Bearer ${token}`
-        }
-    }).then((response) => {
-        expect(response.status).to.eq(200);
-    })
-})
 
+  it('Delete board', () => {
+    editBoard.clickOnConfigurationBtn();
+    deleteBoard.deleteBtn.should('exist')
+    .and('have.text', ' Delete')
+    .and('have.css', 'background-color', 'rgb(254, 126, 86)');
+    deleteBoard.clickOnDeleteBtn();
+    deleteBoard.confirmYesBtn.should('be.visible')
+    .and('have.css', 'background-color', 'rgb(78, 174, 147)');
+    deleteBoard.clickOnYesBtn();
+});
+
+  it('Delete board BE', () => {
+    Cypress.Commands.add('Delete board BE', (token) => {
+    cy.request({
+       method: 'DELETE',
+       url: `https://cypress-api.vivifyscrum-stage.com/api/v2/boards/${boardId}`,  
+       headers: {
+          authorization: `Bearer ${token}`,
+       }
+    }).then((response) => {
+  expect(response.status).to.eq(200);
+      })
+    })
+  })
+
+  it('Logout BE', () => {
+     Cypress.Commands.add('logout', (token) => {
+       cy.request({
+          method: "POST", 
+          url: "https://cypress-api.vivifyscrum-stage.com/api/v2/logout",
+          headers: {
+          authorization: `Bearer ${token}`,
+      }
+   }).then((response) => {
+    expect(response.status).to.eq(200);
+      })
+    })
+  })
 })

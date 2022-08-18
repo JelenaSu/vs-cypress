@@ -16,7 +16,7 @@ class LoginPage {
         this.loginBtn.click();
     }
 
-    login(email = "test1235@gmail.com", password = "test1235") {
+    login(email, password) {
         this.emailInput.type(email);
         this.passwordInput.type(password);
         this.loginBtn.click();
